@@ -21,3 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('api')->group(function () {
     Route::resource('columns', \App\Http\Controllers\ColumnController::class);
 });
+
+Route::middleware('api')->group(function () {
+    Route::resource('cards', \App\Http\Controllers\CardController::class);
+});

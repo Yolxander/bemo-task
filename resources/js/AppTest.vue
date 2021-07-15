@@ -27,7 +27,11 @@
                             v-for="element in arrBackLog"
                             :key="element.name"
                         >
-                            {{ element.name }}
+                            <b-list-group-item class="d-flex justify-content-between align-items-center">
+                                {{ element.name}}
+                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id,element.name)"></b-icon>
+                            </b-list-group-item>
+
                         </div>
                     </draggable>
                 </div>
@@ -39,15 +43,18 @@
                     <!-- In Progress draggable component. Pass products to list prop -->
                     <draggable
                         class="list-group kanban-column"
-                        :list="products"
+                        :list="arrInProgress"
                         group="tasks"
                     >
                         <div
                             class="list-group-item"
-                            v-for="element in products"
+                            v-for="element in arrInProgress"
                             :key="element.name"
                         >
-                            {{ element.name }}
+                            <b-list-group-item class="d-flex justify-content-between align-items-center">
+                                {{ element.name}}
+                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                            </b-list-group-item>
                         </div>
                     </draggable>
                 </div>
@@ -67,7 +74,11 @@
                             v-for="element in arrTested"
                             :key="element.name"
                         >
-                            {{ element.name }}
+                            <b-list-group-item class="d-flex justify-content-between align-items-center">
+                                {{ element.name}}
+                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                            </b-list-group-item>
+
                         </div>
                     </draggable>
                 </div>
@@ -87,7 +98,10 @@
                             v-for="element in arrDone"
                             :key="element.name"
                         >
-                            {{ element.name }}
+                            <b-list-group-item class="d-flex justify-content-between align-items-center">
+                                {{ element.name}}
+                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                            </b-list-group-item>
                         </div>
                     </draggable>
                 </div>
@@ -108,52 +122,54 @@ export default {
     },
     data() {
         return {
-            products: [],
+            arrInProgress: [],
             // for new tasks
             newTask: "",
             // 4 arrays to keep track of our 4 statuses
-            arrBackLog: [
-                { name: "Code Sign Up Page" },
-                { name: "Test Dashboard" },
-                { name: "Style Registration" },
-                { name: "Help with Designs" }
-            ],
+            arrBackLog: [],
             arrTested: [],
             arrDone: []
         };
     },
     created() {
-        this.axios
-            .get('/api/columns/')
-            .then(response => {
-                this.products = response.data;
-            });
+        this.fetchData()
     },
     methods: {
         //add new tasks method
+        fetchData(){
+            this.axios
+                .get('/api/cards/')
+                .then(response => {
+                    this.arrBackLog = response.data;
+                    console.log('yes')
+                });
+        },
         add: function() {
             if (this.newTask) {
                 this.arrBackLog.push({ name: this.newTask });
+                this.axios
+                    .post('/api/cards', {name: this.newTask})
+                    .then(response => (
+                        console.log(this.arrInProgress)
+                    ))
+                    .catch(err => console.log(err))
+                    .finally(() => this.loading = false)
+
                 this.newTask = "";
             }
+
         },
-        deleteProduct(id) {
-            this.axios
-                .delete(`/api/columns/${id}`)
-                .then(response => {
-                    let i = this.products.map(data => data.id).indexOf(id);
-                    this.products.splice(i, 1)
-                });
+        deleteCards(id,name) {
+            console.log(this.arrBackLog)
+
+            if(id){
+                this.axios
+                    .delete(`/api/cards/${id}`)
+                    .then(response => {
+                       this.fetchData()
+                    });
+            }
         },
-        addProduct() {
-            this.axios
-                .post('/api/columns', this.product)
-                .then(response => (
-                    console.log(this.products)
-                ))
-                .catch(err => console.log(err))
-                .finally(() => this.loading = false)
-        }
     }
 };
 </script>
