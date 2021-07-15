@@ -29,7 +29,7 @@
                         >
                             <b-list-group-item class="d-flex justify-content-between align-items-center">
                                 {{ element.name}}
-                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id,element.name)"></b-icon>
+                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id)"></b-icon>
                             </b-list-group-item>
 
                         </div>
@@ -53,7 +53,7 @@
                         >
                             <b-list-group-item class="d-flex justify-content-between align-items-center">
                                 {{ element.name}}
-                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id)"></b-icon>
                             </b-list-group-item>
                         </div>
                     </draggable>
@@ -76,7 +76,7 @@
                         >
                             <b-list-group-item class="d-flex justify-content-between align-items-center">
                                 {{ element.name}}
-                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id)"></b-icon>
                             </b-list-group-item>
 
                         </div>
@@ -100,7 +100,7 @@
                         >
                             <b-list-group-item class="d-flex justify-content-between align-items-center">
                                 {{ element.name}}
-                                <b-icon icon="x-circle" scale="2" variant="danger"></b-icon>
+                                <b-icon icon="x-circle" scale="2" variant="danger" @click="deleteCards(element.id)"></b-icon>
                             </b-list-group-item>
                         </div>
                     </draggable>
@@ -150,7 +150,7 @@ export default {
                 this.axios
                     .post('/api/cards', {name: this.newTask})
                     .then(response => (
-                        console.log(this.arrInProgress)
+                        this.fetchData()
                     ))
                     .catch(err => console.log(err))
                     .finally(() => this.loading = false)
@@ -159,9 +159,8 @@ export default {
             }
 
         },
-        deleteCards(id,name) {
+        deleteCards(id) {
             console.log(this.arrBackLog)
-
             if(id){
                 this.axios
                     .delete(`/api/cards/${id}`)
